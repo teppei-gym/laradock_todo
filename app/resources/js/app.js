@@ -5,11 +5,6 @@ const url = "http://localhost/api/todo";
 const csrf = document.getElementsByName("csrf-token")[0].content;
 const tbody = document.getElementById('todo-list');
 
-// 初期画面のリスト描画
-ajax(url, 'fetch').then(function (response) {
-	output(response, tbody);
-})
-
 // 新規作成
 taskAddBtn.addEventListener("click", function () {
 	const task = document.getElementById("task");
@@ -67,10 +62,11 @@ function output(response, tbody) {
 
 	for (let i = 0; i < response.length; i++) {
 		const tr = document.createElement('tr');
+		const status = response[i].status ? '完了' : '作業中';
 
 		tr.innerHTML = `<tr><td>${i}</td>
 			<td>${response[i].comment}</td>
-			<td><button value="${response[i].id}">${response[i].status}</button></td>
+			<td><button value="${response[i].id}">${status}</button></td>
 			<td><button value="${response[i].id}">削除</button></td>`;
 
 		tbody.appendChild(tr);

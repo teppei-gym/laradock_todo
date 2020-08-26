@@ -19335,11 +19335,7 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 var taskAddBtn = document.getElementById("task-add");
 var url = "http://localhost/api/todo";
 var csrf = document.getElementsByName("csrf-token")[0].content;
-var tbody = document.getElementById('todo-list'); // 初期画面のリスト描画
-
-ajax(url, 'fetch').then(function (response) {
-  output(response, tbody);
-}); // 新規作成
+var tbody = document.getElementById('todo-list'); // 新規作成
 
 taskAddBtn.addEventListener("click", function () {
   var task = document.getElementById("task");
@@ -19393,7 +19389,8 @@ function output(response, tbody) {
 
   for (var i = 0; i < response.length; i++) {
     var tr = document.createElement('tr');
-    tr.innerHTML = "<tr><td>".concat(i, "</td>\n\t\t\t<td>").concat(response[i].comment, "</td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">").concat(response[i].status, "</button></td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">\u524A\u9664</button></td>");
+    var status = response[i].status ? '完了' : '作業中';
+    tr.innerHTML = "<tr><td>".concat(i, "</td>\n\t\t\t<td>").concat(response[i].comment, "</td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">").concat(status, "</button></td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">\u524A\u9664</button></td>");
     tbody.appendChild(tr);
   }
 } // ダブルクリック防止

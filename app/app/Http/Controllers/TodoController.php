@@ -9,6 +9,8 @@ class TodoController extends Controller
 {
     public function index()
     {
-        return view('todo.index');
+        $todoLists = Todolist::all();
+
+        return view('todo.index', compact('todoLists'));
     }
 }

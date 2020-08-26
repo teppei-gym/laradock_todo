@@ -12,20 +12,14 @@ class TodoController extends Controller
     public function create(TodoRequest $request)
     {
         $val = $request->all();
-        $val['status'] = array_search('作業中', config('myapp.todo.status'));
 
         TodoList::create($val);
     }
 
     public function fetch(TodoRequest $request)
     {
-        $todoLists = TodoList::where('status', array_search('作業中', config('myapp.todo.status')))
+        $todoLists = TodoList::where('status', 0)
             ->get(['id', 'comment', 'status']);
-
-        $todoLists->map(function ($item, $key) {
-            $item['status'] = config('myapp.todo.status.' . $item->status);
-            return $item;
-        });
 
         return $todoLists;
     }

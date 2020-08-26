@@ -23,7 +23,14 @@
                 <th colspan="2">状態</th>
         </thead>
         <tbody id="todo-list">
-
+            @foreach($todoLists as $todo)
+            <tr>
+                <td>{{ $loop->index }}</td>
+                <td>{{ $todo->comment }}</td>
+                <td><button value="{{ $todo->id }}">作業中</button></td>
+                <td><button value="{{ $todo->id }}">削除</button></td>
+            </tr>
+            @endforeach
         </tbody>
     </table>
 
