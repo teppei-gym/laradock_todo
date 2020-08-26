@@ -13,6 +13,10 @@ ajax(url, 'fetch').then(function (response) {
 // 新規作成
 taskAddBtn.addEventListener("click", function () {
 	const task = document.getElementById("task");
+	if (task.value === '') return;
+
+	ｄoubleClickPrevention(this);
+
 	ajax(url, "create", { comment: task.value })
 		.then(function () {
 			return ajax(url, 'fetch');
@@ -20,6 +24,9 @@ taskAddBtn.addEventListener("click", function () {
 		.then(function (response) {
 			output(response, tbody);
 		});
+
+	ｄoubleClickPrevention(this, false);
+	task.value = "";
 });
 
 function ajax(url, method, sendObj = null, csrfToken = csrf) {
@@ -63,27 +70,18 @@ function output(response, tbody) {
 
 		tr.innerHTML = `<tr><td>${i}</td>
 			<td>${response[i].comment}</td>
-			<td><button value="${response[i].id}">作業中</button></td>`;
-		const deleteTd = document.createElement('td');
-		deleteTd.appendChild(addDeleteEvent(response[i].id));
-		tr.appendChild(deleteTd);
+			<td><button value="${response[i].id}">${response[i].status}</button></td>
+			<td><button value="${response[i].id}">削除</button></td>`;
+
 		tbody.appendChild(tr);
 	}
 }
 
-// 削除処理をイベントに付与したボタン要素を返す
-function addDeleteEvent(id) {
-	var btn = document.createElement('button');
-	btn.classList.add = "delete-btn";
-	btn.textContent = '削除';
-	btn.value = id;
-	btn.addEventListener("click", function (e) {
-		ajax(url, 'delete', { id: id }).then(function (response) {
-			return ajax(url, 'fetch')
-		}).then(function (response) {
-			output(response, tbody);
-		});
-	});
-
-	return btn;
+// ダブルクリック防止
+function ｄoubleClickPrevention(targetBtn, bool = true) {
+	if (bool) {
+		targetBtn.disabled = true;
+	} else {
+		targetBtn.disabled = false;
+	}
 }

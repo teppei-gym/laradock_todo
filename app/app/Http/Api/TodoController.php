@@ -3,28 +3,30 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use App\Http\Controllers\Controller;
 use App\Modles\TodoList;
+use App\Http\Requests\Api\TodoRequest;
 
 class TodoController extends Controller
 {
-    public function create(Request $request)
+    public function create(TodoRequest $request)
     {
         $val = $request->all();
-        $val['status'] = config('myapp.todo.status.作業中');
+        $val['status'] = array_search('作業中', config('myapp.todo.status'));
 
         TodoList::create($val);
     }
 
-    public function fetch(Request $request)
+    public function fetch(TodoRequest $request)
     {
-        return TodoList::where('status', config('myapp.todo.status.作業中'))->get(['id', 'comment']);
-    }
+        $todoLists = TodoList::where('status', array_search('作業中', config('myapp.todo.status')))
+            ->get(['id', 'comment', 'status']);
 
-    public function delete(Request $request)
-    {
-        $todoList = TodoList::find($request->id);
-        $todoList->delete();
+        $todoLists->map(function ($item, $key) {
+            $item['status'] = config('myapp.todo.status.' . $item->status);
+            return $item;
+        });
+
+        return $todoLists;
     }
 }

@@ -19343,6 +19343,8 @@ ajax(url, 'fetch').then(function (response) {
 
 taskAddBtn.addEventListener("click", function () {
   var task = document.getElementById("task");
+  if (task.value === '') return;
+  ｄoubleClickPrevention(this);
   ajax(url, "create", {
     comment: task.value
   }).then(function () {
@@ -19350,6 +19352,8 @@ taskAddBtn.addEventListener("click", function () {
   }).then(function (response) {
     output(response, tbody);
   });
+  ｄoubleClickPrevention(this, false);
+  task.value = "";
 });
 
 function ajax(url, method) {
@@ -19389,30 +19393,20 @@ function output(response, tbody) {
 
   for (var i = 0; i < response.length; i++) {
     var tr = document.createElement('tr');
-    tr.innerHTML = "<tr><td>".concat(i, "</td>\n\t\t\t<td>").concat(response[i].comment, "</td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">\u4F5C\u696D\u4E2D</button></td>");
-    var deleteTd = document.createElement('td');
-    deleteTd.appendChild(addDeleteEvent(response[i].id));
-    tr.appendChild(deleteTd);
+    tr.innerHTML = "<tr><td>".concat(i, "</td>\n\t\t\t<td>").concat(response[i].comment, "</td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">").concat(response[i].status, "</button></td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">\u524A\u9664</button></td>");
     tbody.appendChild(tr);
   }
-} // 削除処理をイベントに付与したボタン要素を返す
+} // ダブルクリック防止
 
 
-function addDeleteEvent(id) {
-  var btn = document.createElement('button');
-  btn.classList.add = "delete-btn";
-  btn.textContent = '削除';
-  btn.value = id;
-  btn.addEventListener("click", function (e) {
-    ajax(url, 'delete', {
-      id: id
-    }).then(function (response) {
-      return ajax(url, 'fetch');
-    }).then(function (response) {
-      output(response, tbody);
-    });
-  });
-  return btn;
+function ｄoubleClickPrevention(targetBtn) {
+  var bool = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+  if (bool) {
+    targetBtn.disabled = true;
+  } else {
+    targetBtn.disabled = false;
+  }
 }
 
 /***/ }),
