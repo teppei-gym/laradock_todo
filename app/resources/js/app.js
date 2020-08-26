@@ -3,20 +3,23 @@ require("./bootstrap");
 const taskAddBtn = document.getElementById("task-add");
 const url = "http://localhost/api/todo";
 const csrf = document.getElementsByName("csrf-token")[0].content;
-const table = document.getElementById('todo-list');
+const tbody = document.getElementById('todo-list');
 
 // 初期画面のリスト描画
 ajax(url, 'fetch').then(function (response) {
-	output(response, table);
+	output(response, tbody);
 })
 
 // 新規作成
 taskAddBtn.addEventListener("click", function () {
 	const task = document.getElementById("task");
-	ajax(url, "create", { comment: task.value }).then(function (response) {
-		output(response, table);
-		task.value = '';
-	});
+	ajax(url, "create", { comment: task.value })
+		.then(function () {
+			return ajax(url, 'fetch');
+		})
+		.then(function (response) {
+			output(response, tbody);
+		});
 });
 
 function ajax(url, method, sendObj = null, csrfToken = csrf) {
@@ -50,15 +53,37 @@ function ajax(url, method, sendObj = null, csrfToken = csrf) {
 }
 
 // Todoリストの描画
-function output(response, table) {
-	for (let i in response) {
+function output(response, tbody) {
+	while (tbody.firstChild) {
+		tbody.removeChild(tbody.firstChild);
+	}
+
+	for (let i = 0; i < response.length; i++) {
 		const tr = document.createElement('tr');
 
-		tr.innerHTML = `<tr><td>${response[i].id}</td>
+		tr.innerHTML = `<tr><td>${i}</td>
 			<td>${response[i].comment}</td>
-			<td><button value="${response[i].id}">作業中</button></td>
-			<td><button value="${response[i].id}">削除</button></td></tr>`;
-
-		table.appendChild(tr);
+			<td><button value="${response[i].id}">作業中</button></td>`;
+		const deleteTd = document.createElement('td');
+		deleteTd.appendChild(addDeleteEvent(response[i].id));
+		tr.appendChild(deleteTd);
+		tbody.appendChild(tr);
 	}
+}
+
+// 削除処理をイベントに付与したボタン要素を返す
+function addDeleteEvent(id) {
+	var btn = document.createElement('button');
+	btn.classList.add = "delete-btn";
+	btn.textContent = '削除';
+	btn.value = id;
+	btn.addEventListener("click", function (e) {
+		ajax(url, 'delete', { id: id }).then(function (response) {
+			return ajax(url, 'fetch')
+		}).then(function (response) {
+			output(response, tbody);
+		});
+	});
+
+	return btn;
 }
