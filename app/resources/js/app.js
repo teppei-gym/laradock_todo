@@ -4,6 +4,18 @@ const taskAddBtn = document.getElementById("task-add");
 const url = "http://localhost/api/todo";
 const csrf = document.getElementsByName("csrf-token")[0].content;
 const tbody = document.getElementById('todo-list');
+const deleteBtns = document.querySelectorAll('.delete-btn');
+
+// 削除ボタンのイベント追加
+for (let btn of [...deleteBtns]) {
+	btn.addEventListener('click', function (e) {
+		ajax(url, 'delete', { id: e.target.value }).then(function () {
+			return ajax(url, 'fetch');
+		}).then(function (response) {
+			output(response, tbody);
+		});
+	})
+}
 
 // 新規作成
 taskAddBtn.addEventListener("click", function () {
@@ -66,11 +78,31 @@ function output(response, tbody) {
 
 		tr.innerHTML = `<tr><td>${i}</td>
 			<td>${response[i].comment}</td>
-			<td><button value="${response[i].id}">${status}</button></td>
-			<td><button value="${response[i].id}">削除</button></td>`;
+			<td><button value="${response[i].id}">${status}</button></td>`;
+
+		const deleteTd = document.createElement('td');
+		deleteTd.appendChild(createDaleteBtn(response[i].id));
+		tr.appendChild(deleteTd)
 
 		tbody.appendChild(tr);
 	}
+}
+
+// 削除、描画イベントを付与したbtn要素を返す
+function createDaleteBtn(id) {
+	const btn = document.createElement('button');
+	btn.classList.add = "delete-btn";
+	btn.textContent = '削除';
+	btn.dataset.id = id;
+	btn.addEventListener("click", function (e) {
+		ajax(url, 'delete', { id: e.target.dataset.id }).then(function () {
+			return ajax(url, 'fetch')
+		}).then(function (response) {
+			output(response, tbody);
+		});
+	});
+
+	return btn;
 }
 
 // ダブルクリック防止

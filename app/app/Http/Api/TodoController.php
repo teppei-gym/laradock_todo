@@ -23,4 +23,9 @@ class TodoController extends Controller
 
         return $todoLists;
     }
+
+    public function delete(TodoRequest $request)
+    {
+        Todolist::find($request->id)->delete();
+    }
 }

@@ -19330,12 +19330,39 @@ module.exports = function(module) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 var taskAddBtn = document.getElementById("task-add");
 var url = "http://localhost/api/todo";
 var csrf = document.getElementsByName("csrf-token")[0].content;
-var tbody = document.getElementById('todo-list'); // 新規作成
+var tbody = document.getElementById('todo-list');
+var deleteBtns = document.querySelectorAll('.delete-btn'); // 削除ボタンのイベント追加
+
+for (var _i = 0, _arr = _toConsumableArray(deleteBtns); _i < _arr.length; _i++) {
+  var btn = _arr[_i];
+  btn.addEventListener('click', function (e) {
+    ajax(url, 'delete', {
+      id: e.target.value
+    }).then(function () {
+      return ajax(url, 'fetch');
+    }).then(function (response) {
+      output(response, tbody);
+    });
+  });
+} // 新規作成
+
 
 taskAddBtn.addEventListener("click", function () {
   var task = document.getElementById("task");
@@ -19390,9 +19417,30 @@ function output(response, tbody) {
   for (var i = 0; i < response.length; i++) {
     var tr = document.createElement('tr');
     var status = response[i].status ? '完了' : '作業中';
-    tr.innerHTML = "<tr><td>".concat(i, "</td>\n\t\t\t<td>").concat(response[i].comment, "</td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">").concat(status, "</button></td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">\u524A\u9664</button></td>");
+    tr.innerHTML = "<tr><td>".concat(i, "</td>\n\t\t\t<td>").concat(response[i].comment, "</td>\n\t\t\t<td><button value=\"").concat(response[i].id, "\">").concat(status, "</button></td>");
+    var deleteTd = document.createElement('td');
+    deleteTd.appendChild(createDaleteBtn(response[i].id));
+    tr.appendChild(deleteTd);
     tbody.appendChild(tr);
   }
+} // 削除、描画イベントを付与したbtn要素を返す
+
+
+function createDaleteBtn(id) {
+  var btn = document.createElement('button');
+  btn.classList.add = "delete-btn";
+  btn.textContent = '削除';
+  btn.dataset.id = id;
+  btn.addEventListener("click", function (e) {
+    ajax(url, 'delete', {
+      id: e.target.dataset.id
+    }).then(function () {
+      return ajax(url, 'fetch');
+    }).then(function (response) {
+      output(response, tbody);
+    });
+  });
+  return btn;
 } // ダブルクリック防止
 
 

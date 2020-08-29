@@ -27,8 +27,8 @@
             <tr>
                 <td>{{ $loop->index }}</td>
                 <td>{{ $todo->comment }}</td>
-                <td><button value="{{ $todo->id }}">作業中</button></td>
-                <td><button value="{{ $todo->id }}">削除</button></td>
+                <td><button class='status-btn' value="{{ $todo->id }}">作業中</button></td>
+                <td><button class='delete-btn' value="{{ $todo->id }}">削除</button></td>
             </tr>
             @endforeach
         </tbody>
@@ -37,8 +37,6 @@
     <h2>新規タスク追加</h2>
     <input type="text" name="task" id="task">
     <button id="task-add">追加</button>
-
-    <button id="test">test</button>
 </body>
 
 </html>
