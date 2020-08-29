@@ -74,7 +74,10 @@ class TodoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $status = $request->status ? 0 : 1;
+        TodoList::find($id)->update(['status' => $status]);
+
+        return redirect()->route('index');
     }
 
     /**

@@ -26,7 +26,12 @@
                 <td>{{ $loop->index }}</td>
                 <td>{{ $todo->comment }}</td>
                 <td>
-                    <button>作業中</button>
+                    <form action="{{ route('update', ['id' => $todo->id] ) }}" method="post">
+                        @csrf
+                        <input type="hidden" name="_method" value="put">
+                        <input type="hidden" name="status" value="{{ $todo->status }}">
+                        <button>{{ $todo->status ? '完了' : '作業中'}}</button>
+                    </form>
                 </td>
                 <td>
                     <form action="{{ route('destroy', ['id' => $todo->id]) }}" method="post">
