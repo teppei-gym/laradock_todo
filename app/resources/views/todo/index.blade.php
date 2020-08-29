@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="{{ asset('js/app.js') }}" defer></script>
     <title>Document</title>
 </head>
 
@@ -23,20 +21,31 @@
                 <th colspan="2">状態</th>
         </thead>
         <tbody id="todo-list">
-            @foreach($todoLists as $todo)
+            @foreach($todoList as $todo)
             <tr>
                 <td>{{ $loop->index }}</td>
                 <td>{{ $todo->comment }}</td>
-                <td><button class='status-btn' value="{{ $todo->id }}">作業中</button></td>
-                <td><button class='delete-btn' value="{{ $todo->id }}">削除</button></td>
+                <td>
+                    <button>作業中</button>
+                </td>
+                <td>
+                    <form action="{{ route('destroy', ['id' => $todo->id]) }}" method="post">
+                        @csrf
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button>削除</button>
+                    </form>
+                </td>
             </tr>
             @endforeach
         </tbody>
     </table>
 
     <h2>新規タスク追加</h2>
-    <input type="text" name="task" id="task">
-    <button id="task-add">追加</button>
+    <form action="{{ route('store') }}" method="post">
+        @csrf
+        <input type="text" name="comment">
+        <button id="task-add">追加</button>
+    </form>
 </body>
 
 </html>

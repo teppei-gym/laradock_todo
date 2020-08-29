@@ -18,8 +18,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::namespace('Api')->name('api.')->group(function () {
-    Route::post('/todo/create', 'TodoController@create')->name('create');
-    Route::post('/todo/fetch', 'TodoController@fetch')->name('fetch');
-    Route::post('/todo/delete', 'TodoController@delete')->name('delete');
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
 });
