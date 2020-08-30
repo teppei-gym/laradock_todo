@@ -13,10 +13,15 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $todoList = TodoList::all();
+        $status = $request->status;
 
+        if (is_numeric($status)) {
+            $todoList = TodoList::where('status', $status)->get(['id', 'comment', 'status']);
+        } else {
+            $todoList = TodoList::all(['id', 'comment', 'status']);
+        }
         return view('todo.index', compact('todoList'));
     }
 
