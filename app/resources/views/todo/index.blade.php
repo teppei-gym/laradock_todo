@@ -13,7 +13,7 @@
     <form action="{{ route('index') }}" method="get">
         <input type="radio" class="todo-status" name="status" value="" {{ is_null(request()->input('status')) ? 'checked' : '' }}>全て
         <input type="radio" class="todo-status" name="status" value="0" {{ request()->input('status') === '0' ? 'checked' : '' }}>作業中
-        <input type="radio" class="todo-status" name="status" value="1" {{ request()->input('status') == 1 ? 'checked' : '' }}>完了
+        <input type="radio" class="todo-status" name="status" value="1" {{ request()->input('status') === '1' ? 'checked' : '' }}>完了
         <input type="submit" id="status-submit" style="display:none;">
     </form>
 
